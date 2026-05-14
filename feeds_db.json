@@ -1,36 +1,13 @@
 {
-  "version": "2.1",
-  "last_updated": "2026-05-15",
+  "version": "3.0",
   "ingredients": [
-    {
-      "id": "GR_01",
-      "name": "الذرة الصفراء",
-      "category": "الحبوب",
-      "nutrients": {"ME": 3350, "CP": 85, "Ca": 0.2, "P": 2.8, "Lys": 2.4, "Met": 1.8}
-    },
-    {
-      "id": "GR_02",
-      "name": "كسب الصويا 44",
-      "category": "الأكساب",
-      "nutrients": {"ME": 2230, "CP": 440, "Ca": 2.9, "P": 6.5, "Lys": 27.0, "Met": 6.2}
-    },
-    {
-      "id": "CK_01",
-      "name": "أمباز عباد الشمس",
-      "category": "الأكساب",
-      "nutrients": {"ME": 1850, "CP": 350, "Ca": 4.0, "P": 9.0, "Lys": 12.0, "Met": 7.0}
-    },
-    {
-      "id": "MN_01",
-      "name": "الحجر الجيري",
-      "category": "الأملاح",
-      "nutrients": {"ME": 0, "CP": 0, "Ca": 380, "P": 0, "Lys": 0, "Met": 0}
-    },
-    {
-      "id": "MN_02",
-      "name": "DCP",
-      "category": "الأملاح",
-      "nutrients": {"ME": 0, "CP": 0, "Ca": 220, "P": 180, "Lys": 0, "Met": 0}
-    }
+    { "id": "GR_01", "name": "ذرة صفراء", "nutrients": {"ME": 3350, "CP": 85, "Ca": 0.2, "P": 2.8, "Lys": 2.4, "Met": 1.8}, "price": 400 },
+    { "id": "GR_02", "name": "كسب صويا 44%", "nutrients": {"ME": 2230, "CP": 440, "Ca": 2.9, "P": 6.5, "Lys": 27.0, "Met": 6.2}, "price": 800 },
+    { "id": "GR_03", "name": "أمباز عباد شمس", "nutrients": {"ME": 1850, "CP": 350, "Ca": 4.0, "P": 9.0, "Lys": 12.0, "Met": 7.0}, "price": 600 },
+    { "id": "CONC_01", "name": "مركز دواجن 5%", "nutrients": {"ME": 2100, "CP": 400, "Ca": 80.0, "P": 40.0, "Lys": 12.0, "Met": 10.0}, "price": 1200 },
+    { "id": "SYN_01", "name": "ليسين صناعي", "nutrients": {"ME": 0, "CP": 0, "Ca": 0, "P": 0, "Lys": 78.4, "Met": 0}, "price": 1500 },
+    { "id": "SYN_02", "name": "ميثيونين صناعي", "nutrients": {"ME": 0, "CP": 0, "Ca": 0, "P": 0, "Lys": 0, "Met": 99.0}, "price": 1800 },
+    { "id": "MN_01", "name": "حجر جيري", "nutrients": {"ME": 0, "CP": 0, "Ca": 380, "P": 0, "Lys": 0, "Met": 0}, "price": 50 },
+    { "id": "MN_02", "name": "DCP", "nutrients": {"ME": 0, "CP": 0, "Ca": 220, "P": 180, "Lys": 0, "Met": 0}, "price": 300 }
   ]
 }
