@@ -1,48 +1,65 @@
 {
-  "version": "2.1",
-  "last_updated": "2026-05-11",
-  "ingredients": [
-    {
-      "id": "GR_01",
-      "name": "الذرة الرفيعة (نوبة)",
-      "category": "الحبوب",
-      "nutrients": {"DM": 945, "CP": 127.7, "ME_R": 13.35, "ME_P": 14.83, "DE_H": 13.8, "CF": 41.8, "Ca": 0.3, "P": 3.4}
-    },
-    {
-      "id": "GR_02",
-      "name": "الشعير (Barley)",
-      "category": "الحبوب",
-      "nutrients": {"DM": 900, "CP": 117.5, "ME_R": 11.56, "ME_P": 11.37, "DE_H": 12.1, "CF": 47.3, "Ca": 0.5, "P": 3.6}
-    },
-    {
-      "id": "CK_01",
-      "name": "كسب السمسم",
-      "category": "الأكساب",
-      "nutrients": {"DM": 930, "CP": 439.4, "ME_R": 12.57, "ME_P": 12.29, "DE_H": 12.8, "CF": 86.5, "Ca": 21.2, "P": 9.8}
-    },
-    {
-      "id": "CK_02",
-      "name": "كسب عباد الشمس",
-      "category": "الأكساب",
-      "nutrients": {"DM": 920, "CP": 280.5, "ME_R": 13.32, "ME_P": 8.50, "DE_H": 10.2, "CF": 196.1, "Ca": 3.5, "P": 8.1}
-    },
-    {
-      "id": "BY_01",
-      "name": "نخالة القمح",
-      "category": "مخلفات صناعية",
-      "nutrients": {"DM": 890, "CP": 180.0, "ME_R": 11.18, "ME_P": 8.00, "DE_H": 10.5, "CF": 110.0, "Ca": 1.4, "P": 10.5}
-    },
-    {
-      "id": "AN_01",
-      "name": "مسحوق العظم",
-      "category": "مصادر حيوانية",
-      "nutrients": {"DM": 1000, "CP": 272.3, "ME_R": 5.06, "ME_P": 4.50, "DE_H": 4.8, "CF": 0.0, "Ca": 296.4, "P": 118.1}
-    },
-    {
-      "id": "MN_01",
-      "name": "الحجر الجيري",
-      "category": "المعادن",
-      "nutrients": {"DM": 1000, "CP": 0.0, "ME_R": 0.0, "ME_P": 0.0, "DE_H": 0.0, "CF": 0.0, "Ca": 375.0, "P": 0.0}
-    }
-  ]
+  "Corn": {
+    "energy": 3.35,
+    "protein": 0.085,
+    "calcium": 0.0002,
+    "phosphorus": 0.0028,
+    "price": 0.0
+  },
+  "Soybean_Meal": {
+    "energy": 2.23,
+    "protein": 0.44,
+    "calcium": 0.0029,
+    "phosphorus": 0.0065,
+    "price": 0.0
+  },
+  "Sunflower_Meal": {
+    "energy": 1.85,
+    "protein": 0.35,
+    "calcium": 0.004,
+    "phosphorus": 0.009,
+    "price": 0.0
+  },
+  "Wheat_Bran": {
+    "energy": 1.30,
+    "protein": 0.15,
+    "calcium": 0.0014,
+    "phosphorus": 0.0115,
+    "price": 0.0
+  },
+  "Barley": {
+    "energy": 2.90,
+    "protein": 0.11,
+    "calcium": 0.0008,
+    "phosphorus": 0.0035,
+    "price": 0.0
+  },
+  "Sorghum": {
+    "energy": 3.20,
+    "protein": 0.10,
+    "calcium": 0.0002,
+    "phosphorus": 0.0027,
+    "price": 0.0
+  },
+  "Sesame_Cake": {
+    "energy": 2.40,
+    "protein": 0.42,
+    "calcium": 0.02,
+    "phosphorus": 0.01,
+    "price": 0.0
+  },
+  "Limestone": {
+    "energy": 0.0,
+    "protein": 0.0,
+    "calcium": 0.38,
+    "phosphorus": 0.0,
+    "price": 0.0
+  },
+  "DCP": {
+    "energy": 0.0,
+    "protein": 0.0,
+    "calcium": 0.22,
+    "phosphorus": 0.18,
+    "price": 0.0
+  }
 }
