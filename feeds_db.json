@@ -1,34 +1,7 @@
 {
-  "Corn": {
-    "energy": 3.35, "protein": 0.085, "calcium": 0.02, "phosphorus": 0.28,
-    "lysine": 0.24, "methionine": 0.18, "price": 0.0
-  },
-  "Soybean_Meal_44": {
-    "energy": 2.23, "protein": 0.44, "calcium": 0.29, "phosphorus": 0.65,
-    "lysine": 2.70, "methionine": 0.62, "price": 0.0
-  },
-  "Sunflower_Meal": {
-    "energy": 1.85, "protein": 0.35, "calcium": 0.40, "phosphorus": 0.90,
-    "lysine": 1.20, "methionine": 0.70, "price": 0.0
-  },
-  "Sorghum": {
-    "energy": 3.20, "protein": 0.10, "calcium": 0.02, "phosphorus": 0.27,
-    "lysine": 0.22, "methionine": 0.16, "price": 0.0
-  },
-  "Limestone": {
-    "energy": 0.0, "protein": 0.0, "calcium": 38.0, "phosphorus": 0.0,
-    "lysine": 0.0, "methionine": 0.0, "price": 0.0
-  },
-  "DCP": {
-    "energy": 0.0, "protein": 0.0, "calcium": 22.0, "phosphorus": 18.0,
-    "lysine": 0.0, "methionine": 0.0, "price": 0.0
-  },
-  "Lysine_Synthetic": {
-    "energy": 0.0, "protein": 0.0, "calcium": 0.0, "phosphorus": 0.0,
-    "lysine": 78.4, "methionine": 0.0, "price": 0.0
-  },
-  "DL_Methionine": {
-    "energy": 0.0, "protein": 0.0, "calcium": 0.0, "phosphorus": 0.0,
-    "lysine": 0.0, "methionine": 99.0, "price": 0.0
-  }
+  "Corn": { "energy": 3.35, "protein": 8.5, "calcium": 0.02, "phosphorus": 0.28, "lysine": 0.24, "methionine": 0.18, "price": 0.0 },
+  "Soybean_Meal_44": { "energy": 2.23, "protein": 44.0, "calcium": 0.29, "phosphorus": 0.65, "lysine": 2.70, "methionine": 0.62, "price": 0.0 },
+  "Sunflower_Meal": { "energy": 1.85, "protein": 35.0, "calcium": 0.40, "phosphorus": 0.90, "lysine": 1.20, "methionine": 0.70, "price": 0.0 },
+  "Limestone": { "energy": 0.0, "protein": 0.0, "calcium": 38.0, "phosphorus": 0.0, "lysine": 0.0, "methionine": 0.0, "price": 0.0 },
+  "DCP": { "energy": 0.0, "protein": 0.0, "calcium": 22.0, "phosphorus": 18.0, "lysine": 0.0, "methionine": 0.0, "price": 0.0 }
 }
