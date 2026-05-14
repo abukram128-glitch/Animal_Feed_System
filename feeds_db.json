@@ -1,8 +1,36 @@
 {
-  "الذرة الصفراء": { "energy": 3.35, "protein": 8.5, "calcium": 0.02, "phosphorus": 0.28, "lysine": 0.24, "methionine": 0.18, "price": 0.0 },
-  "كسب الصويا 44": { "energy": 2.23, "protein": 44.0, "calcium": 0.29, "phosphorus": 0.65, "lysine": 2.70, "methionine": 0.62, "price": 0.0 },
-  "أمباز عباد الشمس": { "energy": 1.85, "protein": 35.0, "calcium": 0.40, "phosphorus": 0.90, "lysine": 1.20, "methionine": 0.70, "price": 0.0 },
-  "كسب السمسم": { "energy": 2.40, "protein": 42.0, "calcium": 2.0, "phosphorus": 1.0, "lysine": 1.1, "methionine": 0.9, "price": 0.0 },
-  "الحجر الجيري": { "energy": 0.0, "protein": 0.0, "calcium": 38.0, "phosphorus": 0.0, "lysine": 0.0, "methionine": 0.0, "price": 0.0 },
-  "DCP": { "energy": 0.0, "protein": 0.0, "calcium": 22.0, "phosphorus": 18.0, "lysine": 0.0, "methionine": 0.0, "price": 0.0 }
+  "version": "2.1",
+  "last_updated": "2026-05-15",
+  "ingredients": [
+    {
+      "id": "GR_01",
+      "name": "الذرة الصفراء",
+      "category": "الحبوب",
+      "nutrients": {"ME": 3350, "CP": 85, "Ca": 0.2, "P": 2.8, "Lys": 2.4, "Met": 1.8}
+    },
+    {
+      "id": "GR_02",
+      "name": "كسب الصويا 44",
+      "category": "الأكساب",
+      "nutrients": {"ME": 2230, "CP": 440, "Ca": 2.9, "P": 6.5, "Lys": 27.0, "Met": 6.2}
+    },
+    {
+      "id": "CK_01",
+      "name": "أمباز عباد الشمس",
+      "category": "الأكساب",
+      "nutrients": {"ME": 1850, "CP": 350, "Ca": 4.0, "P": 9.0, "Lys": 12.0, "Met": 7.0}
+    },
+    {
+      "id": "MN_01",
+      "name": "الحجر الجيري",
+      "category": "الأملاح",
+      "nutrients": {"ME": 0, "CP": 0, "Ca": 380, "P": 0, "Lys": 0, "Met": 0}
+    },
+    {
+      "id": "MN_02",
+      "name": "DCP",
+      "category": "الأملاح",
+      "nutrients": {"ME": 0, "CP": 0, "Ca": 220, "P": 180, "Lys": 0, "Met": 0}
+    }
+  ]
 }
