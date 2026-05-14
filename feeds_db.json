@@ -1,65 +1,34 @@
 {
   "Corn": {
-    "energy": 3.35,
-    "protein": 0.085,
-    "calcium": 0.0002,
-    "phosphorus": 0.0028,
-    "price": 0.0
+    "energy": 3.35, "protein": 0.085, "calcium": 0.02, "phosphorus": 0.28,
+    "lysine": 0.24, "methionine": 0.18, "price": 0.0
   },
-  "Soybean_Meal": {
-    "energy": 2.23,
-    "protein": 0.44,
-    "calcium": 0.0029,
-    "phosphorus": 0.0065,
-    "price": 0.0
+  "Soybean_Meal_44": {
+    "energy": 2.23, "protein": 0.44, "calcium": 0.29, "phosphorus": 0.65,
+    "lysine": 2.70, "methionine": 0.62, "price": 0.0
   },
   "Sunflower_Meal": {
-    "energy": 1.85,
-    "protein": 0.35,
-    "calcium": 0.004,
-    "phosphorus": 0.009,
-    "price": 0.0
-  },
-  "Wheat_Bran": {
-    "energy": 1.30,
-    "protein": 0.15,
-    "calcium": 0.0014,
-    "phosphorus": 0.0115,
-    "price": 0.0
-  },
-  "Barley": {
-    "energy": 2.90,
-    "protein": 0.11,
-    "calcium": 0.0008,
-    "phosphorus": 0.0035,
-    "price": 0.0
+    "energy": 1.85, "protein": 0.35, "calcium": 0.40, "phosphorus": 0.90,
+    "lysine": 1.20, "methionine": 0.70, "price": 0.0
   },
   "Sorghum": {
-    "energy": 3.20,
-    "protein": 0.10,
-    "calcium": 0.0002,
-    "phosphorus": 0.0027,
-    "price": 0.0
-  },
-  "Sesame_Cake": {
-    "energy": 2.40,
-    "protein": 0.42,
-    "calcium": 0.02,
-    "phosphorus": 0.01,
-    "price": 0.0
+    "energy": 3.20, "protein": 0.10, "calcium": 0.02, "phosphorus": 0.27,
+    "lysine": 0.22, "methionine": 0.16, "price": 0.0
   },
   "Limestone": {
-    "energy": 0.0,
-    "protein": 0.0,
-    "calcium": 0.38,
-    "phosphorus": 0.0,
-    "price": 0.0
+    "energy": 0.0, "protein": 0.0, "calcium": 38.0, "phosphorus": 0.0,
+    "lysine": 0.0, "methionine": 0.0, "price": 0.0
   },
   "DCP": {
-    "energy": 0.0,
-    "protein": 0.0,
-    "calcium": 0.22,
-    "phosphorus": 0.18,
-    "price": 0.0
+    "energy": 0.0, "protein": 0.0, "calcium": 22.0, "phosphorus": 18.0,
+    "lysine": 0.0, "methionine": 0.0, "price": 0.0
+  },
+  "Lysine_Synthetic": {
+    "energy": 0.0, "protein": 0.0, "calcium": 0.0, "phosphorus": 0.0,
+    "lysine": 78.4, "methionine": 0.0, "price": 0.0
+  },
+  "DL_Methionine": {
+    "energy": 0.0, "protein": 0.0, "calcium": 0.0, "phosphorus": 0.0,
+    "lysine": 0.0, "methionine": 99.0, "price": 0.0
   }
 }
