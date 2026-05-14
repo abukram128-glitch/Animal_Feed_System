@@ -1,23 +1,23 @@
-import streamlit as st
+iimport streamlit as st
+import pandas as pd
 
 def check_password():
     if st.session_state.get("password_correct", False):
         return True
-
-    st.title("قفل الأمان - نظام التغذية الذكي")
-    password = st.text_input("أدخل كود الدخول الخاص بالمهندس عبدالقادر:", type="password")
+    st.title("🔐 قفل الأمان - المهندس عبدالقادر")
+    pwd = st.text_input("أدخل كود الدخول الخاص بك:", type="password")
     if st.button("دخول"):
-        if password == st.secrets["password"]:
+        if pwd == st.secrets["password"]:
             st.session_state["password_correct"] = True
             st.rerun()
         else:
-            st.error("⚠️ الكود غير صحيح، يرجى المحاولة مرة أخرى.")
+            st.error("⚠️ الكود غير صحيح!")
     return False
 
 if not check_password():
     st.stop()
 
-import streamlit as st
+
 import pandas as pd
 from engine import SmartFeedEngine
 
