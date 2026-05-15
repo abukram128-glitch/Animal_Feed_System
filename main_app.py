@@ -1,70 +1,63 @@
 import streamlit as st
+import json
 from engine import SmartFeedEngine
 
-# إعدادات الهوية المهنية والألوان
-st.set_page_config(page_title="نظام المهندس عبدالقادر إسماعيل", layout="centered")
+# إعدادات الواجهة
+st.set_page_config(page_title="نظام المهندس عبدالقادر - النسخة الاحترافية", layout="wide")
 
+# استايل التنسيق
 st.markdown("""
     <style>
-    .stApp { background-color: #f4f7f4; }
-    .stButton>button { width: 100%; background-color: #2e7d32; color: white; border-radius: 10px; height: 3.5em; font-weight: bold; }
-    .expert-title { color: #1b5e20; text-align: center; border-right: 8px solid #1b5e20; padding-right: 15px; background: white; border-radius: 5px; padding: 10px; }
+    .stMultiSelect [data-baseweb="tag"] { background-color: #2e7d32; }
+    .reportview-container { background: #f0f2f6; }
     </style>
     """, unsafe_allow_html=True)
 
-st.markdown("<div class='expert-title'><h1>🌾 نظام الإدارة الغذائية الذكي</h1><p><b>اختصاصي تغذية الحيوان: عبدالقادر إسماعيل تاور</b></p></div>", unsafe_allow_html=True)
+st.title("🌾 نظام تركيب الأعلاف الذكي (نسخة البدائل المحلية)")
+st.info("أهلاً يا بشمهندس عبدالقادر. يمكنك الآن اختيار المكونات المتاحة في منطقتك من القائمة أدناه.")
 
-# المكتبة العلمية الشاملة والمحدثة
-INTERNAL_LIBRARY = {
-    "قسم الدواجن": {
-        "بادي (لاحم)": {"CP": 23.0, "ME": 3025, "Ca": 1.0, "P": 0.45, "type": "poultry", "prod_type": "growth"},
-        "نامي (لاحم)": {"CP": 21.0, "ME": 3150, "Ca": 0.9, "P": 0.35, "type": "poultry", "prod_type": "growth"},
-        "ناهي (لاحم)": {"CP": 19.0, "ME": 3200, "Ca": 0.85, "P": 0.30, "type": "poultry", "prod_type": "growth"},
-        "دجاج بياض (إنتاج)": {"CP": 17.5, "ME": 2800, "Ca": 3.8, "P": 0.40, "type": "poultry", "prod_type": "egg"}
-    },
-    "قسم الأبقار": {
-        "أبقار حلابة": {"CP": 17.5, "ME": 11.8, "Ca": 0.75, "P": 0.45, "type": "ruminant", "prod_type": "milk"},
-        "عجول تسمين (ذكور)": {"CP": 14.0, "ME": 12.0, "Ca": 0.6, "P": 0.35, "type": "ruminant", "prod_type": "growth"}
-    },
-    "قسم الأغنام والماعز": {
-        "ماعز/أغنام (لبن)": {"CP": 16.0, "ME": 11.5, "Ca": 0.6, "P": 0.3, "type": "ruminant", "prod_type": "milk"},
-        "خراف تسمين (ذكور)": {"CP": 14.5, "ME": 11.0, "Ca": 0.4, "P": 0.25, "type": "ruminant", "prod_type": "growth"}
-    },
-    "قسم الخيول": {
-        "خيل رياضة/عمل": {"CP": 11.0, "ME": 14.5, "Ca": 0.3, "P": 0.2, "type": "horse", "prod_type": "work"}
-    }
-}
+# تحميل المكتبة العلمية (التي استخلصناها من صورك)
+try:
+    with open('feeds_db.json', 'r', encoding='utf-8') as f:
+        db = json.load(f)
+        all_ingredients = db['ingredients']
+except:
+    st.error("يرجى التأكد من رفع ملف feeds_db.json المحدث")
+    st.stop()
 
-cat = st.selectbox("1. اختر فئة الحيوان:", list(INTERNAL_LIBRARY.keys()))
-sub_cat = st.selectbox("2. اختر الصنف الإنتاجي:", list(INTERNAL_LIBRARY[cat].keys()))
-target = INTERNAL_LIBRARY[cat][sub_cat]
+# 1. اختيار المكونات المتوفرة ميدانياً
+st.subheader("1️⃣ حدد المكونات المتوفرة في منطقتك حالياً:")
+available_names = [i['name'] for i in all_ingredients]
+selected_names = st.multiselect("اختر المكونات (سيتم استبعاد غير المختارة من الحسابات):", 
+                               available_names, 
+                               default=[n for n in available_names if "ذرة" in n or "صويا" in n or "نخالة" in n])
 
-st.divider()
-st.subheader("📊 بيانات الإنتاج الميداني")
-c1, c2 = st.columns(2)
+# تصفية المكتبة بناءً على اختيارك
+selected_ingredients = [i for i in all_ingredients if i['name'] in selected_names]
 
-with c1:
-    count = st.number_input("العدد الكلي:", value=100 if "الدواجن" in cat else 1)
-    weight = st.number_input("الوزن (كجم):", value=500 if "الأبقار" in cat else 45)
+# 2. تحديد الاحتياجات الغذائية (بناءً على جداول NRC/ARC المرفقة)
+st.subheader("2️⃣ الأهداف الغذائية للقطيع:")
+col1, col2, col3, col4 = st.columns(4)
+with col1: req_cp = st.number_input("البروتين الخام (CP %):", 10.0, 30.0, 18.0)
+with col2: req_me = st.number_input("الطاقة التمثيلية (ME):", 1500, 3500, 2850)
+with col3: req_ca = st.number_input("الكالسيوم (Ca %):", 0.1, 5.0, 1.0)
+with col4: req_p = st.number_input("الفسفور المتاح (P %):", 0.1, 2.0, 0.45)
 
-with c2:
-    # تمييز الواجهة: إخفاء إنتاج الحليب في حالة التسمين أو الدواجن
-    if target["prod_type"] == "milk":
-        prod = st.number_input("إنتاج الحليب اليومي (كجم):", value=15.0)
-    elif target["prod_type"] == "growth":
-        growth = st.number_input("النمو المستهدف (جرام/يوم):", value=1000 if "الأبقار" in cat else 200)
-    elif target["prod_type"] == "egg":
-        egg_rate = st.slider("نسبة إنتاج البيض %:", 0, 100, 85)
+animal_type = st.radio("نوع الحيوان لضبط قيود الأمان:", ["ruminant", "poultry"])
+
+if st.button("🚀 حساب التركيبة الأقل تكلفة بالبدائل المختارة"):
+    if not selected_ingredients:
+        st.warning("يرجى اختيار مكون واحد على الأقل.")
     else:
-        st.write("حالة صيانة/رياضة")
-
-if st.button("🚀 تشغيل الخوارزمية العلمية"):
-    engine = SmartFeedEngine()
-    res = engine.solve(target["CP"], target["ME"], target["Ca"], target["P"], target["type"])
-    if "✅" in res:
-        st.success(res)
-        # حسابات المادة الجافة والعلف
-        if target["type"] == "ruminant":
-            st.info(f"📍 احتياج المادة الجافة التقريبي للرأس: {weight * 0.03:.2f} كجم/يوم")
-    else:
-        st.error(res)
+        engine = SmartFeedEngine(selected_ingredients)
+        requirements = {'cp': req_cp, 'me': req_me, 'ca': req_ca, 'p': req_p}
+        result = engine.create_formulation(requirements, animal_type)
+        
+        if result.success:
+            st.success("✅ تم العثور على التركيبة المثالية:")
+            for i, val in enumerate(result.x):
+                if val > 0.001:
+                    st.write(f"**- {selected_names[i]}:** {val*100:.2f} %")
+            st.metric("التكلفة الإجمالية للطن:", f"{result.fun:,.2f}")
+        else:
+            st.error("❌ لا يمكن تحقيق هذه الاحتياجات بالمكونات المختارة. حاول إضافة بدائل بروتينية أو طاقة إضافية.")
