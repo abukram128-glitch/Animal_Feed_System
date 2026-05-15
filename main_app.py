@@ -3,49 +3,44 @@ import pandas as pd
 import json
 from engine import SmartFeedEngine
 
-# 1. قائمة الاحتياجات الغذائية الشاملة
+# إعدادات الصفحة
+st.set_page_config(page_title="نظام المهندس عبدالقادر لإدارة التغذية", layout="wide")
+
+# 1. تعريف الثوابت والاحتياجات الغذائية
 STANDARDS = {
     "--- اختر نوع الحيوان ---": {"CP": 0.0, "ME": 0.0, "Ca": 0.0, "P": 0.0, "Lys": 0.0, "Met": 0.0},
-    "دجاج لاحم - بادئ": {"CP": 23.0, "ME": 3025, "Ca": 1.0, "P": 0.45, "Lys": 1.10, "Met": 0.50},
-    "دجاج لاحم - نامي": {"CP": 21.0, "ME": 3150, "Ca": 0.9, "P": 0.35, "Lys": 1.00, "Met": 0.45},
-    "دجاج بياض - إنتاج": {"CP": 17.5, "ME": 2800, "Ca": 3.8, "P": 0.40, "Lys": 0.85, "Met": 0.38},
     "أبقار حلوب": {"CP": 17.5, "ME": 11.8, "Ca": 0.75, "P": 0.45, "Lys": 0.0, "Met": 0.0},
     "أبقار تسمين": {"CP": 14.0, "ME": 12.0, "Ca": 0.6, "P": 0.35, "Lys": 0.0, "Met": 0.0},
-    "ماعز حلوب": {"CP": 16.0, "ME": 11.5, "Ca": 0.6, "P": 0.3, "Lys": 0.0, "Met": 0.0},
-    "ماعز تسمين": {"CP": 13.5, "ME": 11.0, "Ca": 0.5, "P": 0.25, "Lys": 0.0, "Met": 0.0},
-    "أغنام تسمين": {"CP": 14.5, "ME": 11.0, "Ca": 0.4, "P": 0.25, "Lys": 0.0, "Met": 0.0},
-    "خيل - فرسات (حوامل)": {"CP": 12.5, "ME": 13.0, "Ca": 0.45, "P": 0.35, "Lys": 0.5, "Met": 0.0},
-    "خيل - أمهار (فطام)": {"CP": 15.0, "ME": 13.5, "Ca": 0.7, "P": 0.45, "Lys": 0.7, "Met": 0.0}
+    "ماعز/أغنام تسمين": {"CP": 14.5, "ME": 11.0, "Ca": 0.4, "P": 0.25, "Lys": 0.0, "Met": 0.0},
+    "دجاج لاحم - نامي": {"CP": 21.0, "ME": 3150, "Ca": 0.9, "P": 0.35, "Lys": 1.00, "Met": 0.45}
 }
 
-st.set_page_config(page_title="نظام المهندس عبدالقادر", layout="wide")
+PREMIX_DOSES = {
+    "أبقار حلوب (200 جرام)": 200,
+    "أبقار تسمين (120 جرام)": 120,
+    "أغنام/ماعز (35 جرام)": 35,
+    "خيل (80 جرام)": 80
+}
 
-# 2. الآلة الحاسبة الجانبية
-with st.sidebar:
-    st.header("🧮 آلة حاسبة سريعة")
-    weight = st.number_input("الكمية (طن)", value=1.0)
-    price_unit = st.number_input("سعر الوحدة", value=0.0)
-    if st.button("احسب التكلفة"):
-        st.write(f"الإجمالي: {weight * price_unit}")
-    st.divider()
+st.title("🌾 نظام تركيب العلائق المطور وإدارة التغذية")
+st.info("تم تطوير هذا النظام بواسطة المهندس عبدالقادر إسماعيل")
 
-st.title("🌾 نظام تركيب العلائق المطور")
+# القسم الأول: بيانات الحيوان الميدانية
+st.header("⚖️ إدارة التغذية الميدانية")
+col_w1, col_w2 = st.columns(2)
+with col_w1:
+    animal_weight = st.number_input("وزن الحيوان الحي (كجم)", value=500, step=50)
+    selected_premix = st.selectbox("نوع العليقة المصححة (Premix):", list(PREMIX_DOSES.keys()))
+with col_w2:
+    dmi_percent = st.slider("معدل استهلاك المادة الجافة (% من الوزن)", 2.0, 5.0, 3.0)
+    ratio_conc = st.slider("نسبة المركز المستهدفة في العليقة الكلية (%)", 20, 60, 40)
 
-# 3. عرض المكونات المتوفرة
-st.subheader("📦 المكونات المتوفرة في المخزن")
-try:
-    with open("feeds_db.json", "r", encoding="utf-8") as f:
-        db_data = json.load(f)
-    df_ingredients = pd.DataFrame([
-        {"المادة": i["name"], "بروتين %": i["nutrients"]["CP"]/10 if i["nutrients"]["CP"] > 100 else i["nutrients"]["CP"], "طاقة ME": i["nutrients"]["ME"]} 
-        for i in db_data["ingredients"]
-    ])
-    st.table(df_ingredients)
-except:
-    st.error("تأكد من وجود ملف feeds_db.json بصيغة صحيحة")
+total_dm_daily = animal_weight * (dmi_percent / 100)
+st.warning(f"💡 إجمالي احتياج الرأس الواحد: {total_dm_daily:.2f} كجم مادة جافة يومياً.")
 
-# 4. مدخلات الحساب
-st.subheader("🎯 تحديد الأهداف الغذائية")
+# القسم الثاني: الأهداف الغذائية للتركيبة المركزية
+st.divider()
+st.header("🎯 تحديد أهداف التركيبة المركزية")
 choice = st.selectbox("اختر نوع العليقة:", list(STANDARDS.keys()))
 std = STANDARDS[choice]
 
@@ -60,7 +55,19 @@ with col3:
     req_lys = st.number_input("الليسين المطلوب (%)", value=float(std["Lys"]))
     req_met = st.number_input("الميثيونين المطلوب (%)", value=float(std["Met"]))
 
-if st.button("🚀 احسب العليقة الأقل تكلفة"):
+# القسم الثالث: الحساب والنتائج
+if st.button("🚀 احسب البرنامج الغذائي المتكامل"):
     engine = SmartFeedEngine("feeds_db.json")
-    res = engine.solve(req_cp, req_me, req_ca, req_p, req_lys, req_met)
-    st.success(res)
+    
+    # 1. حل مشكلة التركيبة المركزية
+    chem_result = engine.solve(req_cp, req_me, req_ca, req_p, req_lys, req_met)
+    
+    if "✅" in chem_result:
+        st.success(chem_result)
+        
+        # 2. حساب جدول التغذية اليومي
+        premix_val = PREMIX_DOSES[selected_premix]
+        schedule = engine.generate_feeding_schedule(total_dm_daily, ratio_conc, premix_val)
+        st.markdown(schedule)
+    else:
+        st.error(chem_result)
