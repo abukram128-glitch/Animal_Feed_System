@@ -1,73 +1,72 @@
 import streamlit as st
 import pandas as pd
-import json
 from engine import SmartFeedEngine
 
-# إعدادات الصفحة
-st.set_page_config(page_title="نظام المهندس عبدالقادر لإدارة التغذية", layout="wide")
+st.set_page_config(page_title="نظام المهندس عبدالقادر المتكامل", layout="wide")
 
-# 1. تعريف الثوابت والاحتياجات الغذائية
-STANDARDS = {
-    "--- اختر نوع الحيوان ---": {"CP": 0.0, "ME": 0.0, "Ca": 0.0, "P": 0.0, "Lys": 0.0, "Met": 0.0},
-    "أبقار حلوب": {"CP": 17.5, "ME": 11.8, "Ca": 0.75, "P": 0.45, "Lys": 0.0, "Met": 0.0},
-    "أبقار تسمين": {"CP": 14.0, "ME": 12.0, "Ca": 0.6, "P": 0.35, "Lys": 0.0, "Met": 0.0},
-    "ماعز/أغنام تسمين": {"CP": 14.5, "ME": 11.0, "Ca": 0.4, "P": 0.25, "Lys": 0.0, "Met": 0.0},
-    "دجاج لاحم - نامي": {"CP": 21.0, "ME": 3150, "Ca": 0.9, "P": 0.35, "Lys": 1.00, "Met": 0.45}
+# 1. قاعدة بيانات الأهداف والاحتياجات
+ANIMAL_DATA = {
+    "الدواجن": {
+        "لاحم - بادي": {"CP": 23.0, "ME": 3025, "Ca": 1.0, "P": 0.45, "type": "poultry"},
+        "لاحم - نامي": {"CP": 21.0, "ME": 3150, "Ca": 0.9, "P": 0.35, "type": "poultry"},
+        "دجاج بياض": {"CP": 17.5, "ME": 2800, "Ca": 3.8, "P": 0.40, "type": "poultry"}
+    },
+    "الخيل": {
+        "فرسات (حوامل)": {"CP": 12.5, "ME": 13.0, "Ca": 0.45, "P": 0.35, "type": "equine"},
+        "أمهار (فطام)": {"CP": 15.0, "ME": 13.5, "Ca": 0.7, "P": 0.45, "type": "equine"},
+        "حصين رياضة": {"CP": 11.0, "ME": 14.5, "Ca": 0.3, "P": 0.2, "type": "equine"}
+    },
+    "الأبقار": {
+        "حلابة": {"CP": 17.5, "ME": 11.8, "Ca": 0.75, "P": 0.45, "type": "ruminant"},
+        "تسمين": {"CP": 14.0, "ME": 12.0, "Ca": 0.6, "P": 0.35, "type": "ruminant"},
+        "جفاف": {"CP": 12.0, "ME": 10.5, "Ca": 0.5, "P": 0.3, "type": "ruminant"}
+    },
+    "الأغنام والماعز": {
+        "حلوب": {"CP": 16.0, "ME": 11.5, "Ca": 0.6, "P": 0.3, "type": "ruminant"},
+        "تسمين": {"CP": 14.5, "ME": 11.0, "Ca": 0.4, "P": 0.25, "type": "ruminant"}
+    }
 }
 
-PREMIX_DOSES = {
-    "أبقار حلوب (200 جرام)": 200,
-    "أبقار تسمين (120 جرام)": 120,
-    "أغنام/ماعز (35 جرام)": 35,
-    "خيل (80 جرام)": 80
-}
+st.title("🚜 نظام الإدارة الغذائية المتكامل")
+st.caption("تطوير المهندس: عبدالقادر إسماعيل - خبير تغذية حيوان")
 
-st.title("🌾 نظام تركيب العلائق المطور وإدارة التغذية")
-st.info("تم تطوير هذا النظام بواسطة المهندس عبدالقادر إسماعيل")
+# القسم الأول: اختيار التصنيف
+cat = st.selectbox("1. اختر فئة الحيوان:", list(ANIMAL_DATA.keys()))
+sub_cat = st.selectbox("2. اختر النوع:", list(ANIMAL_DATA[cat].keys()))
+target = ANIMAL_DATA[cat][sub_cat]
 
-# القسم الأول: بيانات الحيوان الميدانية
-st.header("⚖️ إدارة التغذية الميدانية")
-col_w1, col_w2 = st.columns(2)
-with col_w1:
-    animal_weight = st.number_input("وزن الحيوان الحي (كجم)", value=500, step=50)
-    selected_premix = st.selectbox("نوع العليقة المصححة (Premix):", list(PREMIX_DOSES.keys()))
-with col_w2:
-    dmi_percent = st.slider("معدل استهلاك المادة الجافة (% من الوزن)", 2.0, 5.0, 3.0)
-    ratio_conc = st.slider("نسبة المركز المستهدفة في العليقة الكلية (%)", 20, 60, 40)
-
-total_dm_daily = animal_weight * (dmi_percent / 100)
-st.warning(f"💡 إجمالي احتياج الرأس الواحد: {total_dm_daily:.2f} كجم مادة جافة يومياً.")
-
-# القسم الثاني: الأهداف الغذائية للتركيبة المركزية
+# القسم الثاني: بيانات الإنتاج والميدان
 st.divider()
-st.header("🎯 تحديد أهداف التركيبة المركزية")
-choice = st.selectbox("اختر نوع العليقة:", list(STANDARDS.keys()))
-std = STANDARDS[choice]
+st.header("📊 بيانات الإنتاج والميدان")
+col1, col2 = st.columns(2)
 
-col1, col2, col3 = st.columns(3)
 with col1:
-    req_cp = st.number_input("البروتين المطلوب (%)", value=float(std["CP"]))
-    req_me = st.number_input("الطاقة المطلوبة (ME)", value=float(std["ME"]))
-with col2:
-    req_ca = st.number_input("الكالسيوم المطلوب (%)", value=float(std["Ca"]))
-    req_p = st.number_input("الفسفور المطلوب (%)", value=float(std["P"]))
-with col3:
-    req_lys = st.number_input("الليسين المطلوب (%)", value=float(std["Lys"]))
-    req_met = st.number_input("الميثيونين المطلوب (%)", value=float(std["Met"]))
+    count = st.number_input("العدد (رأس/طائر):", value=1, min_value=1)
+    if target["type"] == "poultry":
+        age = st.number_input("العمر (بالأيام):", value=1)
+    else:
+        weight = st.number_input("وزن الحيوان (كجم):", value=500)
 
-# القسم الثالث: الحساب والنتائج
-if st.button("🚀 احسب البرنامج الغذائي المتكامل"):
+with col2:
+    if "حلاب" in sub_cat or "حلوب" in sub_cat:
+        milk_prod = st.number_input("إنتاج الحليب اليومي (كجم/رأس):", value=10.0)
+    elif "تسمين" in sub_cat or "لاحم" in sub_cat:
+        growth_target = st.number_input("معدل النمو المستهدف (جرام/يوم):", value=1000 if target["type"] != "poultry" else 50)
+
+# القسم الثالث: الحساب
+if st.button("🚀 احسب البرنامج الغذائي"):
     engine = SmartFeedEngine("feeds_db.json")
     
-    # 1. حل مشكلة التركيبة المركزية
-    chem_result = engine.solve(req_cp, req_me, req_ca, req_p, req_lys, req_met)
+    # حساب التركيبة المركزية
+    result = engine.solve(target["CP"], target["ME"], target["Ca"], target["P"], 0, 0, target["type"])
+    st.success(result)
     
-    if "✅" in chem_result:
-        st.success(chem_result)
-        
-        # 2. حساب جدول التغذية اليومي
-        premix_val = PREMIX_DOSES[selected_premix]
-        schedule = engine.generate_feeding_schedule(total_dm_daily, ratio_conc, premix_val)
-        st.markdown(schedule)
+    # حساب الجدول اليومي بناءً على مدخلاتك
+    if target["type"] == "poultry":
+        daily_feed = (age * 5.5 / 1000) * count # معادلة نمو الدواجن
+        st.info(f"📋 إجمالي العلف المطلوب للقطيع: {daily_feed:.2f} كجم يومياً")
     else:
-        st.error(chem_result)
+        # معادلة المجترات والخيل بناءً على الوزن والإنتاج
+        base_intake = weight * 0.03
+        if "حلاب" in sub_cat: base_intake += (milk_prod * 0.3)
+        st.info(f"📋 إجمالي المادة الجافة المطلوبة يومياً للرأس: {base_intake:.2f} كجم")
