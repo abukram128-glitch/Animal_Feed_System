@@ -1,48 +1,46 @@
+import numpy as np
 from scipy.optimize import linprog
 
 class SmartFeedEngine:
-    def __init__(self):
-        self.ingredients = {
-            "ذرة صفراء": {"nutrients": {"CP": 8.5, "ME": 3350, "Ca": 0.02, "P": 0.28}, "price": 400},
-            "ذرة بيضاء": {"nutrients": {"CP": 9.0, "ME": 3250, "Ca": 0.03, "P": 0.30}, "price": 380},
-            "شعير": {"nutrients": {"CP": 11.5, "ME": 2900, "Ca": 0.06, "P": 0.35}, "price": 420},
-            "كسب صويا 44%": {"nutrients": {"CP": 44.0, "ME": 2230, "Ca": 0.29, "P": 0.65}, "price": 850},
-            "نخالة قمح": {"nutrients": {"CP": 15.0, "ME": 1300, "Ca": 0.10, "P": 0.90}, "price": 320},
-            "برسيم جاف": {"nutrients": {"CP": 16.0, "ME": 2000, "Ca": 1.40, "P": 0.22}, "price": 450},
-            "مركزات": {"nutrients": {"CP": 40.0, "ME": 2100, "Ca": 8.0, "P": 4.0}, "price": 1200},
-            "حجر جيري": {"nutrients": {"CP": 0, "ME": 0, "Ca": 38.0, "P": 0}, "price": 50}
-        }
+    def __init__(self, ingredients_data):
+        self.ingredients = ingredients_data
 
-    def solve(self, req_cp, req_me, req_ca, req_p, animal_type):
-        names = list(self.ingredients.keys())
-        prices = [self.ingredients[n].get('price', 1) for n in names]
+    def create_formulation(self, requirements, animal_type):
+        # استخراج البيانات من المكتبة المحدثة بناءً على صور الجداول
+        names = [i['name'] for i in self.ingredients]
+        prices = [i['price'] for i in self.ingredients]
         
+        # المصفوفات الغذائية (بروتين، طاقة، كالسيوم، فسفور)
+        cp_matrix = [i['nutrients']['CP'] for i in self.ingredients]
+        me_matrix = [i['nutrients']['ME'] for i in self.ingredients]
+        ca_matrix = [i['nutrients']['Ca'] for i in self.ingredients]
+        p_matrix = [i['nutrients']['P'] for i in self.ingredients]
+
+        # القيود (Constraints)
+        A_eq = [[1] * len(names)]
+        b_eq = [1] # المجموع الكلي 100% (أو 1 كجم)
+
         A_ub = [
-            [-self.ingredients[n]['nutrients']['CP'] for n in names],
-            [-self.ingredients[n]['nutrients']['ME'] for n in names],
-            [-self.ingredients[n]['nutrients']['Ca'] for n in names],
-            [-self.ingredients[n]['nutrients']['P'] for n in names]
+            [-x for x in cp_matrix], # الحد الأدنى للبروتين
+            [-x for x in me_matrix], # الحد الأدنى للطاقة
+            [x for x in ca_matrix],  # الحد الأعلى للكالسيوم
+            [x for x in p_matrix]    # الحد الأعلى للفسفور
         ]
-        b_ub = [-req_cp, -req_me, -req_ca, -req_p]
-        A_eq, b_eq = [[1 for _ in names]], [1]
-        
+        b_ub = [-requirements['cp'], -requirements['me'], requirements['ca'], requirements['p']]
+
+        # قيود الأمان العلمية (مستخلصة من الجداول 4، 5، 6)
         bounds = []
-        for n in names:
-            if animal_type == "poultry":
-                if "نخالة" in n or "برسيم" in n: bounds.append((0, 0.02))
-                elif "حجر جيري" in n: bounds.append((0.01, 0.09))
-                else: bounds.append((0, 1))
-            else: # المجترات (أبقار، أغنام، ماعز) والخيول
-                if "نخالة" in n: bounds.append((0.15, 0.45))
-                elif "برسيم" in n: bounds.append((0.10, 0.35))
-                elif "حجر جيري" in n: bounds.append((0.005, 0.02))
-                else: bounds.append((0, 1))
-                
+        for name in names:
+            if "حجر جيري" in name:
+                # للمجترات لا يتجاوز 1.5%، للدواجن البياض يصل لـ 8%
+                limit = 0.08 if "بياض" in animal_type else 0.015
+                bounds.append((0, limit))
+            elif "ملح" in name:
+                bounds.append((0, 0.005)) # ملح الطعام لا يتجاوز 0.5%
+            else:
+                bounds.append((0, 1))
+
+        # حل المعادلة (أقل تكلفة)
         res = linprog(prices, A_ub=A_ub, b_ub=b_ub, A_eq=A_eq, b_eq=b_eq, bounds=bounds, method='highs')
-        
-        if res.success:
-            output = f"✅ التركيبة المعتمدة لـ {animal_type}:\n"
-            for i, val in enumerate(res.x):
-                if val > 0.001: output += f"- {names[i]}: {round(val*100, 2)}%\n"
-            return output
-        return "❌ لم يتم العثور على حل؛ يرجى مراجعة توازن المدخلات."
+
+        return res
