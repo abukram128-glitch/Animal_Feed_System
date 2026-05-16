@@ -1,9 +1,8 @@
-# اسم الملف المقترح: main.py
+# filename: main.py
 import pprint
-# استيراد المحرك الرياضي من الملف الأول
 from engine import SmartFeedEngine 
 
-# 1. قاعدة البيانات (الـ JSON الخاص بك)
+# قاعدة بيانات الخامات والأسعار التي أرسلتها
 data = {
   "ingredients": [
     {"name": "ذرة صفراء (حبوب)", "nutrients": {"CP": 8.8, "ME": 3370, "Ca": 0.02, "P": 0.27, "Lys": 0.24, "Met": 0.18}, "price": 400},
@@ -17,7 +16,7 @@ data = {
   ]
 }
 
-# 2. تحديد الاحتياجات الغذائية المستهدفة (مثال: كتكوت تسمين بادي)
+# تحديد الاحتياجات الغذائية المطلوبة للحيوان أو الطائر
 poultry_broiler_req = {
     'cp_min': 23.0,
     'me_min': 3000,
@@ -29,9 +28,9 @@ poultry_broiler_req = {
     'met_min': 0.50
 }
 
-# 3. تشغيل المحرك وعرض النتائج في الـ Terminal
+# تشغيل المحرك
 engine = SmartFeedEngine(data["ingredients"])
 result = engine.create_formulation(poultry_broiler_req, animal_type="دواجن تسمين")
 
-print("--- نتيجة التحليل التجريبي للبرنامج ---")
+print("--- نتيجة تشغيل البرنامج التجريبية ---")
 pprint.pprint(result)
