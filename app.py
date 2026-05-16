@@ -1,12 +1,10 @@
-# اسم الملف المقترح: app.py
+# filename: app.py
 import streamlit as st
 import pandas as pd
-# استيراد المحرك الرياضي مباشرة للاعتماد عليه في الخلفية
 from engine import SmartFeedEngine 
 
-st.set_page_config(page_title="SmartFeed Engine", layout="wide", page_icon="🌾")
+st.set_page_config(page_title="محرك التغذية الذكية", layout="wide")
 
-# 1. قاعدة البيانات الافتراضية المدمجة بالواجهة
 @st.cache_data
 def get_default_ingredients():
     return [
@@ -21,40 +19,29 @@ def get_default_ingredients():
     ]
 
 st.title("🌾 محرك تركيب الأعلاف الذكي | SmartFeed Engine")
-st.markdown("تطبيق تفاعلي لحساب العلائق الأقل تكلفة (Least-Cost Ration Formulation).")
+st.markdown("صياغة الحصة التموينية الأقل تكلفة")
 
 col1, col2 = st.columns([2, 3])
 
 with col1:
-    st.header("1. الاحتياجات الغذائية")
-    animal_type = st.selectbox("نوع الحيوان / الطائر:", ["دواجن تسمين", "دواجن بياض", "مجترات (تسمين)", "مجترات (حليب)"])
+    st.header("1. الاحتياجات الغذائية للحيوان")
+    animal_type = st.selectbox("نوع الحيوان:", ["دواجن تسمين", "دواجن بياض", "مجترات (تسمين)", "مجترات (حليب)"])
     
     st.markdown("---")
-    cp_min = st.number_input("الحد الأدنى للبروتين الخام (CP %)", value=23.0, step=0.5)
-    me_min = st.number_input("الحد الأدنى للطاقة (ME kcal/kg)", value=3000, step=50)
-    
-    sub_col1, sub_col2 = st.columns(2)
-    with sub_col1:
-        ca_min = st.number_input("أدنى كالسيوم (%)", value=0.90, step=0.05)
-        p_min = st.number_input("أدنى فسفور (%)", value=0.45, step=0.05)
-        lys_min = st.number_input("أدنى لايسين (%)", value=1.10, step=0.05)
-    with sub_col2:
-        ca_max = st.number_input("أقصى كالسيوم (%)", value=1.10, step=0.05)
-        p_max = st.number_input("أقصى فسفور (%)", value=0.60, step=0.05)
-        met_min = st.number_input("أدنى ميثيونين (%)", value=0.50, step=0.05)
+    cp_min = st.number_input("الحد للبروتين الخام (CP %)", value=23.0)
+    me_min = st.number_input("الحد الصافي للطاقة (ME kcal/kg)", value=3000)
+    ca_min = st.number_input("أدنى كالسيوم (%)", value=0.90)
 
 with col2:
-    st.header("2. إدارة أسعار وتحليل الخامات المتاحة")
-    st.markdown("يمكنك تعديل الأسعار أو نسب التحليل الغذائي مباشرة من الجدول:")
+    st.header("2. إدارة تحليل أسعار الخام")
+    st.markdown("تعديل التحليل والأسعار مباشرة من الجدول التالي:")
     
     df_ingredients = pd.DataFrame(get_default_ingredients())
-    # استخدام st.data_editor ليتيح للمستخدم التعديل المباشر أو إضافة خامات جديدة
     edited_df = st.data_editor(df_ingredients, num_rows="dynamic", hide_index=True)
 
 st.markdown("---")
 if st.button("🚀 احسب التركيبة المثالية الآن", use_container_width=True):
     
-    # تحويل بيانات الجدول المعدل إلى الصيغة المتوافقة مع المحرك الرياضي
     formatted_ingredients = []
     for _, row in edited_df.iterrows():
         formatted_ingredients.append({
@@ -66,34 +53,32 @@ if st.button("🚀 احسب التركيبة المثالية الآن", use_con
             }
         })
 
-    # تجهيز قاموس الاحتياجات
     reqs = {
         'cp_min': cp_min, 'me_min': me_min,
-        'ca_min': ca_min, 'ca_max': ca_max,
-        'p_min': p_min, 'p_max': p_max,
-        'lys_min': lys_min, 'met_min': met_min
+        'ca_min': ca_min, 'ca_max': ca_min + 0.2,
+        'p_min': 0.45, 'p_max': 0.60,
+        'lys_min': 1.10, 'met_min': 0.50
     }
 
-    # استدعاء المحرك الرياضي وحل المسألة
     engine = SmartFeedEngine(formatted_ingredients)
     res = engine.create_formulation(reqs, animal_type)
 
     if res["Status"] == "Success":
-        st.success("✅ تم العثور على التركيبة الاقتصادية المثالية بنجاح!")
+        st.success("✔ تم العثور على التركيبة الاقتصادية المثالية")
         
         out_col1, out_col2 = st.columns(2)
         with out_col1:
-            st.subheader("📊 نسب المكونات في الطن:")
+            st.subheader("📊 المكونات النسبية في طن:")
             df_res = pd.DataFrame(list(res["Formulation_Percentage"].items()), columns=['الخامة', 'النسبة (%)'])
-            st.dataframe(df_res, hide_index=True, use_container_width=True)
+            st.dataframe(df_res, hide_index=True)
             st.bar_chart(df_res.set_index('الخامة'))
             
         with out_col2:
-            st.subheader("🧪 التحليل الغذائي النهائي المحقق:")
-            df_nutrients = pd.DataFrame(list(res["Actual_Nutritional_Profile"].items()), columns=['العنصر', 'النسبة المحققة فعلياً'])
-            st.dataframe(df_nutrients, hide_index=True, use_container_width=True)
+            st.subheader("🧪 التحليل النهائي المحقق:")
+            df_nutrients = pd.DataFrame(list(res["Actual_Nutritional_Profile"].items()), columns=['العنصر', 'النسبة'])
+            st.dataframe(df_nutrients, hide_index=True)
             
-            st.metric(label="💰 التكلفة الإجمالية لكل 100 كجم", value=f"{res['Cost_per_100kg']}")
-            st.metric(label="🚛 تكلفة الطن الواحد الفصيلية", value=f"{round(res['Cost_per_100kg'] * 10, 2)}")
+            st.metric(label="💰 التكلفة لكل 100 كجم", value=f"{res['Cost_per_100kg']}")
+            st.metric(label="🚛 تكلفة الطن الواحد", value=f"{round(res['Cost_per_100kg'] * 10, 2)}")
     else:
-        st.error(f"❌ لم يتم العثور على حل مطابق: {res['Message']}")
+        st.error(f"❌ لم يتم العثور على حل حسب المعايير المطلوبة")
