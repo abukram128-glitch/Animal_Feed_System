@@ -10,7 +10,6 @@ class SmartFeedEngine:
         names = [i['name'] for i in self.ingredients]
         prices = [i['price'] for i in self.ingredients]
         
-        # استخراج المصفوفات الغذائية
         cp_matrix  = [i['nutrients']['CP'] for i in self.ingredients]
         me_matrix  = [i['nutrients']['ME'] for i in self.ingredients]
         ca_matrix  = [i['nutrients']['Ca'] for i in self.ingredients]
@@ -18,20 +17,18 @@ class SmartFeedEngine:
         lys_matrix = [i['nutrients']['Lys'] for i in self.ingredients]
         met_matrix = [i['nutrients']['Met'] for i in self.ingredients]
 
-        # 1. قيد المساواة (مجموع الخلطة = 100%)
         A_eq = [[1] * len(names)]
         b_eq = [100.0] 
 
-        # 2. قيود عدم المساواة (الحدود الدنيا والعليا للمغذيات)
         A_ub = [
-            [-x for x in cp_matrix],  # أدنى بروتين
-            [-x for x in me_matrix],  # أدنى طاقة
-            [-x for x in ca_matrix],  # أدنى كالسيوم
-            [x for x in ca_matrix],   # أقصى كالسيوم
-            [-x for x in p_matrix],   # أدنى فسفور
-            [x for x in p_matrix],    # أقصى فسفور
-            [-x for x in lys_matrix], # أدنى لايسين
-            [-x for x in met_matrix]  # أدنى ميثيونين
+            [-x for x in cp_matrix],
+            [-x for x in me_matrix],
+            [-x for x in ca_matrix],
+            [x for x in ca_matrix],
+            [-x for x in p_matrix],
+            [x for x in p_matrix],
+            [-x for x in lys_matrix],
+            [-x for x in met_matrix]
         ]
         
         b_ub = [
@@ -45,7 +42,6 @@ class SmartFeedEngine:
             -requirements['met_min']
         ]
 
-        # 3. حدود الأمان الفنية لكل خامة بناءً على نوع الحيوان
         bounds = []
         for name in names:
             if "حجر جيري" in name:
@@ -61,10 +57,8 @@ class SmartFeedEngine:
             else:
                 bounds.append((0, 100.0))
 
-        # تشغيل خوارزمية التحسين المتطورة HiGHS
         res = linprog(prices, A_ub=A_ub, b_ub=b_ub, A_eq=A_eq, b_eq=b_eq, bounds=bounds, method='highs')
 
-        # تحليل وتنسيق المخرجات
         if res.success:
             formulation = {names[i]: round(res.x[i], 2) for i in range(len(names)) if res.x[i] > 0.01}
             actual_nutrients = {
